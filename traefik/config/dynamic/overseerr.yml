@@ -1,0 +1,15 @@
+http:
+  routers:
+    overseerr:
+      rule: "Host(`overseerr.lankrui.be`)"
+      entryPoints:
+        - https
+      service: overseerr-service
+      tls:
+        certResolver: letsEncrypt
+
+  services:
+    overseerr-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.68.75:5055"

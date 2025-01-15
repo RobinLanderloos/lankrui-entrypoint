@@ -1,0 +1,17 @@
+http:
+  routers:
+    sonarr-anime:
+      rule: "Host(`sonarr-anime.lankrui.be`)"
+      entryPoints:
+        - https
+      service: sonarr-anime-service
+      tls:
+        certResolver: letsEncrypt
+      middlewares:
+        - authentik
+
+  services:
+    sonarr-anime-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.68.75:8998"

@@ -1,0 +1,17 @@
+http:
+  routers:
+    sabnzbd:
+      rule: "Host(`sabnzbd.lankrui.be`)"
+      entryPoints:
+        - https
+      service: sabnzbd-service
+      tls:
+        certResolver: letsEncrypt
+      middlewares:
+        - authentik
+
+  services:
+    sabnzbd-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.68.75:8081"

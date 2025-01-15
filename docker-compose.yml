@@ -1,0 +1,102 @@
+services:
+  # Traefik
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/config/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/config/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/certs:/certs
+      - ./traefik/logs:/logs
+    labels:
+      - "traefik.enable=true"
+    env_file:
+      - path: "./traefik/.traefik-env"
+        required: true
+  # Authentik
+  postgresql:
+    image: docker.io/library/postgres:16-alpine
+    restart: unless-stopped
+    container_name: authentik-postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - database:/var/lib/postgresql/data
+    env_file:
+      - ./authentik/.authentik-env
+  redis:
+    image: docker.io/library/redis:alpine
+    container_name: authentik-redis
+    command: --save 60 1 --loglevel warning
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - redis:/data
+  server:
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.12.2}
+    container_name: authentik-server
+    restart: unless-stopped
+    command: server
+    volumes:
+      - ./authentik/media:/media
+      - ./authentik/custom-templates:/templates
+    env_file:
+      - ./authentik/.authentik-env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authentik-https.rule=Host(`authentik.lankrui.be`)"
+      - "traefik.http.routers.authentik-https.entrypoints=https"
+      - "traefik.http.routers.authentik-https.tls=true"
+      - "traefik.http.routers.authentik-https.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.authentik-https.service=authentik-svc"
+      - "traefik.http.services.authentik-svc.loadBalancer.server.port=9000"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  worker:
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.12.2}
+    container_name: authentik-worker
+    restart: unless-stopped
+    command: worker
+    # `user: root` and the docker socket volume are optional.
+    # See more for the docker socket integration here:
+    # https://goauthentik.io/docs/outposts/integrations/docker
+    # Removing `user: root` also prevents the worker from fixing the permissions
+    # on the mounted folders, so when removing this make sure the folders have the correct UID/GID
+    # (1000:1000 by default)
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./authentik/media:/media
+      - ./authentik/certs:/certs
+      - ./authentik/custom-templates:/templates
+    env_file:
+      - ./authentik/.authentik-env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  database:
+    driver: local
+  redis:
+    driver: local
