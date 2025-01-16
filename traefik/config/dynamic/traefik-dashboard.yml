@@ -1,0 +1,17 @@
+http:
+  routers:
+    dashboard:
+      rule: "Host(`traefik.lankrui.be`)"
+      service: dashboard-service
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsEncrypt
+      middlewares:
+        - authentik
+        
+  services:
+    dashboard-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.68.68:8080"
