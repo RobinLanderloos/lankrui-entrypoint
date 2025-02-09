@@ -62,7 +62,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.authentik-https.rule=Host(`authentik.lankrui.be`)"
-      - "traefik.http.routers.authentik-https.entrypoints=https"
+      - "traefik.http.routers.authentik-https.entrypoints=websecure"
       - "traefik.http.routers.authentik-https.tls=true"
       - "traefik.http.routers.authentik-https.tls.certresolver=letsEncrypt"
       - "traefik.http.routers.authentik-https.service=authentik-svc"
