@@ -1,0 +1,14 @@
+http:
+  routers:
+    jellyseerr:
+      rule: "Host(`jellyseerr.lankrui.be`)"
+      service: jellyseerr-service
+      tls:
+        certResolver: letsEncrypt
+
+  services:
+    jellyseerr-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.68.75:5056"
+
