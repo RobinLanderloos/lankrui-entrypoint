@@ -3,8 +3,6 @@ http:
     dashboard:
       rule: "Host(`traefik.lankrui.be`)"
       service: dashboard-service
-      entryPoints:
-        - https
       tls:
         certResolver: letsEncrypt
       middlewares:

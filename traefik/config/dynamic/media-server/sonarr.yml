@@ -2,8 +2,6 @@ http:
   routers:
     sonarr:
       rule: "Host(`sonarr.lankrui.be`)"
-      entryPoints:
-        - https
       service: sonarr-service
       tls:
         certResolver: letsEncrypt

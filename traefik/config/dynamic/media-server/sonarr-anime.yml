@@ -2,8 +2,6 @@ http:
   routers:
     sonarr-anime:
       rule: "Host(`sonarr-anime.lankrui.be`)"
-      entryPoints:
-        - https
       service: sonarr-anime-service
       tls:
         certResolver: letsEncrypt

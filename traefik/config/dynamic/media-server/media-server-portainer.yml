@@ -2,8 +2,6 @@ http:
   routers:
     media-server-portainer:
       rule: "Host(`media-server-portainer.lankrui.be`)"
-      entryPoints:
-        - https
       service: media-server-portainer-service
       tls:
         certResolver: letsEncrypt

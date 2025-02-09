@@ -2,8 +2,6 @@ http:
   routers:
     home-assistant:
       rule: "Host(`home-assistant.lankrui.be`)"
-      entryPoints:
-        - https
       service: home-assistant-service
       tls:
         certResolver: letsEncrypt

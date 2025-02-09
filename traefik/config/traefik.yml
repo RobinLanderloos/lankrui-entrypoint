@@ -1,7 +1,12 @@
 entryPoints:
-  http:
+  web:
     address: ":80"
-  https:
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
     address: ":443"
 
 certificatesResolvers:

@@ -2,8 +2,6 @@ http:
   routers:
     sabnzbd:
       rule: "Host(`sabnzbd.lankrui.be`)"
-      entryPoints:
-        - https
       service: sabnzbd-service
       tls:
         certResolver: letsEncrypt

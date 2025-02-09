@@ -2,8 +2,6 @@ http:
   routers:
     radarr:
       rule: "Host(`radarr.lankrui.be`)"
-      entryPoints:
-        - https
       service: radarr-service
       tls:
         certResolver: letsEncrypt
