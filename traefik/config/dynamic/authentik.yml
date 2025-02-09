@@ -1,0 +1,13 @@
+http:
+  routers:
+    authentik-https:
+      rule: "Host(`authentik.lankrui.be`)"
+      service: authentik-svc
+      tls:
+        certResolver: letsEncrypt
+
+  services:
+    authentik-svc:
+      loadBalancer:
+        servers:
+          - url: "http://authentik-server:9000"

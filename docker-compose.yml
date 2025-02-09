@@ -59,14 +59,6 @@ services:
       - ./authentik/.authentik-env
     ports:
       - 9000:9000
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.authentik-https.rule=Host(`authentik.lankrui.be`)"
-      - "traefik.http.routers.authentik-https.entrypoints=websecure"
-      - "traefik.http.routers.authentik-https.tls=true"
-      - "traefik.http.routers.authentik-https.tls.certresolver=letsEncrypt"
-      - "traefik.http.routers.authentik-https.service=authentik-svc"
-      - "traefik.http.services.authentik-svc.loadBalancer.server.port=9000"
     depends_on:
       postgresql:
         condition: service_healthy
