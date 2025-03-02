@@ -1,0 +1,13 @@
+http:
+  routers:
+    tautulli:
+      rule: "Host(`tautulli.lankrui.be`)"
+      service: tautulli-service
+      tls:
+        certResolver: letsEncrypt
+
+  services:
+    tautulli-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.68.75:8181"
