@@ -34,36 +34,21 @@ services:
       - ./authentik/postgresql/data:/var/lib/postgresql/data
     env_file:
       - ./authentik/.authentik-env
-  redis:
-    image: docker.io/library/redis:8.2.1-alpine
-    container_name: authentik-redis
-    command: --save 60 1 --loglevel warning
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
-      start_period: 20s
-      interval: 30s
-      retries: 5
-      timeout: 3s
-    volumes:
-      - ./authentik/redis/data:/data
   server:
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.12.2}
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2026.8.5}
     container_name: authentik-server
     restart: unless-stopped
     command: server
     volumes:
-      - ./authentik/media:/media
+      - ./authentik/data:/data
       - ./authentik/custom-templates:/templates
     env_file:
       - ./authentik/.authentik-env
     depends_on:
       postgresql:
         condition: service_healthy
-      redis:
-        condition: service_healthy
   worker:
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.12.2}
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2026.8.5}
     container_name: authentik-worker
     restart: unless-stopped
     command: worker
@@ -76,13 +61,11 @@ services:
     user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./authentik/media:/media
+      - ./authentik/data:/data
       - ./authentik/certs:/certs
       - ./authentik/custom-templates:/templates
     env_file:
       - ./authentik/.authentik-env
     depends_on:
       postgresql:
-        condition: service_healthy
-      redis:
         condition: service_healthy
