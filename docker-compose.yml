@@ -1,7 +1,7 @@
 services:
   # Traefik
   traefik:
-    image: traefik:v3.3
+    image: traefik:v3.3.7
     container_name: traefik
     restart: unless-stopped
     ports:
@@ -21,7 +21,7 @@ services:
         required: true
   # Authentik
   postgresql:
-    image: docker.io/library/postgres:16-alpine
+    image: docker.io/library/postgres:16.10-alpine
     restart: unless-stopped
     container_name: authentik-postgresql
     healthcheck:
@@ -35,7 +35,7 @@ services:
     env_file:
       - ./authentik/.authentik-env
   redis:
-    image: docker.io/library/redis:alpine
+    image: docker.io/library/redis:8.2.1-alpine
     container_name: authentik-redis
     command: --save 60 1 --loglevel warning
     restart: unless-stopped
