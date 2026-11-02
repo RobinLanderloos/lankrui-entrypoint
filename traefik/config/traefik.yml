@@ -16,7 +16,8 @@ certificatesResolvers:
       storage: "/certs/acme.json"
       dnsChallenge:
         provider: cloudflare  
-        delayBeforeCheck: 0  
+        propagation:
+          delayBeforeChecks: 0s  
 
 providers:
   docker:
