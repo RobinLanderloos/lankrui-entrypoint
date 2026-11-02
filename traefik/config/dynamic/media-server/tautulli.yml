@@ -5,6 +5,8 @@ http:
       service: tautulli-service
       tls:
         certResolver: letsEncrypt
+      middlewares:
+        - authentik
 
   services:
     tautulli-service:
