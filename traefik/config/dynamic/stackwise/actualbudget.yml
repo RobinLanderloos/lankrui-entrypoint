@@ -1,0 +1,15 @@
+http:
+  routers:
+    actualbudget:
+      rule: "Host(`actualbudget.lankrui.be`)"
+      service: actualbudget-service
+      tls:
+        certResolver: letsEncrypt
+      middlewares:
+        - authentik
+
+  services:
+    actualbudget-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.68.71:5006"

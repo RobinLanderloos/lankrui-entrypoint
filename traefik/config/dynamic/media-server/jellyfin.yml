@@ -1,0 +1,13 @@
+# http:
+#   routers:
+#     jellyfin:
+#       rule: "Host(`jellyfin.lankrui.be`)"
+#       service: jellyfin-service
+#       tls:
+#         certResolver: letsEncrypt
+
+#   services:
+#     jellyfin-service:
+#       loadBalancer:
+#         servers:
+#           - url: "http://192.168.68.75:8096"
